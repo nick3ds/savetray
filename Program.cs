@@ -74,6 +74,8 @@ namespace savetray
 
                 try { trayIcon.Icon = Icon.ExtractAssociatedIcon(usericon); }
                 catch { trayIcon.Icon = Resources.AppIcon; }
+
+                Application.ApplicationExit += (sender, e) => trayIcon.Visible = false;
             }
 
             void Dispatch(string file, string args, bool await = false)
