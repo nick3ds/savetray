@@ -4,6 +4,7 @@ using savetray.Properties;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Drawing;
 
 namespace savetray
 {
@@ -22,17 +23,17 @@ namespace savetray
             readonly NotifyIcon trayIcon;
             readonly List<MenuItem> menu = new List<MenuItem>();
             readonly string settings = @"Resources\settings.txt";
+            readonly string usericon = @"Resources\favicon.ico";
 
             public Context()
             {
                 trayIcon = new NotifyIcon()
                 {
-                    Icon = Resources.AppIcon,
                     Text = Environment.UserName,
                     Visible = true
                 };
 
-                Dictionary<string, List<MenuItem>> items = 
+                Dictionary<string, List<MenuItem>> items =
                     new Dictionary<string, List<MenuItem>>();
 
                 foreach (string line in File.ReadAllLines(settings))
@@ -70,6 +71,9 @@ namespace savetray
 
                 trayIcon.ContextMenu = new ContextMenu(menu.ToArray());
                 trayIcon.DoubleClick += (sender, e) => Dispatch("notepad", settings);
+
+                try { trayIcon.Icon = Icon.ExtractAssociatedIcon(usericon); }
+                catch { trayIcon.Icon = Resources.AppIcon; }
             }
 
             void Dispatch(string file, string args, bool await = false)
