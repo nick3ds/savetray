@@ -39,11 +39,11 @@ namespace savetray
                 {
                     string[] terms = line.Split(',');
 
-                    if (terms.Length < 3) continue;
+                    if (terms.Length < 2) continue;
 
                     string label = terms[0];
                     string path = terms[1];
-                    string args = terms[2];
+                    string args = terms.Length > 2 ? terms[2] : null;
 
                     string[] tags = label.Split('\\');
                     string cat = tags.Length > 1 ? tags[0] : "";
