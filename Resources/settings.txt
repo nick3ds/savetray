@@ -1,1 +1,1 @@
-﻿hello, world
+﻿nick3ds,"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",https://github.com/nick3ds/savetray
