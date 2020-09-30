@@ -1,0 +1,7 @@
+.vs/
+bin/
+obj/
+
+*.Designer.cs
+*.ppk
+*.user
