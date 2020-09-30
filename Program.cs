@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using savetray.Properties;
+using System.Diagnostics;
 
 namespace savetray
 {
@@ -27,6 +28,23 @@ namespace savetray
                     Text = Environment.UserName,
                     Visible = true
                 };
+
+                trayIcon.DoubleClick +=
+                    (sender, e) => Dispatch("notepad", @"Resources\settings.txt");
+            }
+
+            void Dispatch(string file, string args)
+            {
+                try
+                {
+                    using (Process proc = new Process())
+                    {
+                        proc.StartInfo.FileName = file;
+                        proc.StartInfo.Arguments = args;
+                        proc.Start();
+                    }
+                }
+                catch { }
             }
         }
     }
