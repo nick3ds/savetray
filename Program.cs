@@ -50,16 +50,26 @@ namespace savetray
                     string cat = tags.Length > 1 ? tags[0].Trim() : "";
                     string tag = tags.Length > 1 ? tags[1].Trim() : tags[0].Trim();
 
+                    void action(object sender, EventArgs e) => Dispatch(path, args);
+
+                    if (tag == "$")
+                    {
+                        trayIcon.DoubleClick += action;
+                        continue;
+                    }
+
                     if (!items.ContainsKey(cat))
                         items.Add(cat, new List<MenuItem>());
 
-                    items[cat].Add(new MenuItem(tag, (sender, e) => Dispatch(path, args)));
+                    items[cat].Add(new MenuItem(tag, action));
                 }
 
                 foreach (string key in items.Keys)
                 {
-                    if (key == "") menu.AddRange(items[key]);
-                    else menu.Add(new MenuItem(MenuMerge.Add, 0, Shortcut.None, key,
+                    if (key == "")
+                        menu.AddRange(items[key]);
+                    else
+                        menu.Add(new MenuItem(MenuMerge.Add, 0, Shortcut.None, key,
                         null, null, null, items[key].ToArray()));
                 }
 
@@ -70,7 +80,6 @@ namespace savetray
                 }));
 
                 trayIcon.ContextMenu = new ContextMenu(menu.ToArray());
-                trayIcon.DoubleClick += (sender, e) => Dispatch("notepad", settings);
 
                 try { trayIcon.Icon = Icon.ExtractAssociatedIcon(usericon); }
                 catch { trayIcon.Icon = Resources.AppIcon; }
