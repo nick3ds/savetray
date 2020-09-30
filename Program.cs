@@ -4,7 +4,6 @@ using savetray.Properties;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting.Channels;
 
 namespace savetray
 {
@@ -33,6 +32,9 @@ namespace savetray
                     Visible = true
                 };
 
+                Dictionary<string, List<MenuItem>> items = 
+                    new Dictionary<string, List<MenuItem>>();
+
                 foreach (string line in File.ReadAllLines(settings))
                 {
                     string[] terms = line.Split(',');
@@ -43,7 +45,21 @@ namespace savetray
                     string path = terms[1];
                     string args = terms[2];
 
-                    menu.Add(new MenuItem(label, (sender, e) => Dispatch(path, args)));
+                    string[] tags = label.Split('\\');
+                    string cat = tags.Length > 1 ? tags[0] : "";
+                    string tag = tags.Length > 1 ? tags[1] : tags[0];
+
+                    if (!items.ContainsKey(cat))
+                        items.Add(cat, new List<MenuItem>());
+
+                    items[cat].Add(new MenuItem(tag, (sender, e) => Dispatch(path, args)));
+                }
+
+                foreach (string key in items.Keys)
+                {
+                    if (key == "") menu.AddRange(items[key]);
+                    else menu.Add(new MenuItem(MenuMerge.Add, 0, Shortcut.None, key,
+                        null, null, null, items[key].ToArray()));
                 }
 
                 menu.Add(new MenuItem("settings..", (sender, e) =>
