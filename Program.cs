@@ -37,17 +37,17 @@ namespace savetray
 
                 foreach (string line in File.ReadAllLines(settings))
                 {
-                    string[] terms = line.Split(',');
+                    string[] terms = line.Split(';');
+                    string label = terms[0].Trim();
 
-                    if (terms.Length < 2) continue;
+                    if (terms.Length < 2 || label?[0] == '#') continue;
 
-                    string label = terms[0];
-                    string path = terms[1];
-                    string args = terms.Length > 2 ? terms[2] : null;
+                    string path = terms[1].Trim();
+                    string args = terms.Length > 2 ? terms[2].Trim() : null;
 
                     string[] tags = label.Split('\\');
-                    string cat = tags.Length > 1 ? tags[0] : "";
-                    string tag = tags.Length > 1 ? tags[1] : tags[0];
+                    string cat = tags.Length > 1 ? tags[0].Trim() : "";
+                    string tag = tags.Length > 1 ? tags[1].Trim() : tags[0].Trim();
 
                     if (!items.ContainsKey(cat))
                         items.Add(cat, new List<MenuItem>());
