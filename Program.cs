@@ -4,6 +4,7 @@ using savetray.Properties;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Remoting.Channels;
 
 namespace savetray
 {
@@ -45,11 +46,17 @@ namespace savetray
                     menu.Add(new MenuItem(label, (sender, e) => Dispatch(path, args)));
                 }
 
+                menu.Add(new MenuItem("settings..", (sender, e) =>
+                {
+                    Dispatch("notepad", settings, true);
+                    Application.Restart();
+                }));
+
                 trayIcon.ContextMenu = new ContextMenu(menu.ToArray());
                 trayIcon.DoubleClick += (sender, e) => Dispatch("notepad", settings);
             }
 
-            void Dispatch(string file, string args)
+            void Dispatch(string file, string args, bool await = false)
             {
                 try
                 {
@@ -58,6 +65,8 @@ namespace savetray
                         proc.StartInfo.FileName = file;
                         proc.StartInfo.Arguments = args;
                         proc.Start();
+
+                        if (await) proc.WaitForExit();
                     }
                 }
                 catch { }
