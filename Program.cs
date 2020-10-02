@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
+using System.Threading;
 
 namespace savetray
 {
@@ -15,7 +16,10 @@ namespace savetray
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Context());
+            new Mutex(true, "savetray_mutex", out bool created);
+
+            if (created)
+                Application.Run(new Context());
         }
 
         public class Context : ApplicationContext
