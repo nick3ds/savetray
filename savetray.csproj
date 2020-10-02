@@ -96,4 +96,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>taskkill /f /im savetray.exe &gt;nul 2&gt;&amp;1
+exit 0</PreBuildEvent>
+  </PropertyGroup>
 </Project>
