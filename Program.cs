@@ -80,7 +80,7 @@ namespace savetray
                 menu.Add(new MenuItem("settings..", (sender, e) =>
                 {
                     trayIcon.ContextMenu.Dispose();
-                    Dispatch("notepad", settings, true);
+                    Dispatch(settings, null, true);
                     Application.Restart();
                 }));
 
