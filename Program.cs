@@ -65,7 +65,12 @@ namespace savetray
                     if (!items.ContainsKey(cat))
                         items.Add(cat, new List<MenuItem>());
 
-                    items[cat].Add(new MenuItem(tag, action));
+                    MenuItem item = items[cat].Find(m => m.Text == tag);
+
+                    if (item is null)
+                        items[cat].Add(new MenuItem(tag, action));
+                    else
+                        item.Click += action;
                 }
 
                 foreach (string key in items.Keys)
