@@ -42,7 +42,7 @@ namespace savetray
 
                 foreach (string line in File.ReadAllLines(settings))
                 {
-                    string[] terms = line.Split(';');
+                    string[] terms = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                     string label = terms[0].Trim();
 
                     if (terms.Length < 2 || label?[0] == '#') continue;
