@@ -7,6 +7,8 @@ using System.IO;
 using System.Drawing;
 using System.Threading;
 
+using Timer = System.Timers.Timer;
+
 namespace savetray
 {
     static class Program
@@ -42,19 +44,37 @@ namespace savetray
 
                 foreach (string line in File.ReadAllLines(settings))
                 {
-                    string[] terms = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<string> terms = new List<string>(
+                        line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+
                     string label = terms[0].Trim();
 
-                    if (terms.Length < 2 || label?[0] == '#') continue;
+                    if (terms.Count < 2 || label?[0] == '#') continue;
+
+                    string[] tags = label.Split(new char[] { '\\' }, 2);
+                    string cat = tags.Length > 1 ? tags[0].Trim() : "";
+                    string tag = tags[tags.Length - 1].Trim();
+
+                    int.TryParse(terms[1].Trim('&', ' '), out int delay);
+                    if (delay != 0) terms.RemoveAt(1);
 
                     string path = terms[1].Trim();
-                    string args = terms.Length > 2 ? terms[2].Trim() : null;
+                    string args = terms.Count > 2 ? terms[2].Trim() : null;
 
-                    string[] tags = label.Split('\\');
-                    string cat = tags.Length > 1 ? tags[0].Trim() : "";
-                    string tag = tags.Length > 1 ? tags[1].Trim() : tags[0].Trim();
+                    EventHandler action;
 
-                    void action(object sender, EventArgs e) => Dispatch(path, args);
+                    if (delay > 0)
+                    {
+                        action = (object sender, EventArgs e) =>
+                        {
+                            Timer timer = new Timer(delay * 1000);
+                            timer.Elapsed += delegate { Dispatch(path, args); };
+                            timer.AutoReset = false;
+                            timer.Start();
+                        };
+                    }
+                    else 
+                        action = (object sender, EventArgs e) => Dispatch(path, args);
 
                     if (tag == "$")
                     {
