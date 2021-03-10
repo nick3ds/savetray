@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
 using System.Threading;
+using System.Media;
 
 using Timer = System.Timers.Timer;
 
@@ -30,6 +31,7 @@ namespace savetray
             readonly List<MenuItem> menu = new List<MenuItem>();
             readonly string settings = @"Resources\settings.txt";
             readonly string usericon = @"Resources\favicon.ico";
+            readonly string wavfiles = "alarm|beep";
 
             public Context()
             {
@@ -121,6 +123,14 @@ namespace savetray
             {
                 try
                 {
+                    if (wavfiles.Contains(file.ToLower()))
+                    {
+                        SoundPlayer player = new SoundPlayer($"Resources\\{file}.wav");
+                        player.PlaySync();
+                        player.Dispose();
+                        return;
+                    }
+
                     using (Process proc = new Process())
                     {
                         proc.StartInfo.FileName = file;

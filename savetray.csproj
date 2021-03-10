@@ -84,6 +84,12 @@
     <None Include="Resources\AppIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\alarm.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\beep.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\settings.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
