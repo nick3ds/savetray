@@ -58,7 +58,11 @@ namespace savetray
                     string tag = tags[tags.Length - 1].Trim();
 
                     int.TryParse(terms[1].Trim('&', ' '), out int delay);
-                    if (delay != 0) terms.RemoveAt(1);
+                    if (delay != 0)
+                    {
+                        tag += $" ({delay}s)";
+                        terms.RemoveAt(1);
+                    }
 
                     string path = terms[1].Trim();
                     string args = terms.Count > 2 ? terms[2].Trim() : null;
@@ -70,13 +74,51 @@ namespace savetray
                         action = (object sender, EventArgs e) =>
                         {
                             Timer timer = new Timer(delay * 1000);
-                            timer.Elapsed += delegate { Dispatch(path, args); };
+
+                            MenuItem stamp = new MenuItem($"cancel {cat} > {tag}", (ss, ee) =>
+                            {
+                                timer.Stop();
+                                timer.Dispose();
+                            });
+
+                            var mainMenu = trayIcon.ContextMenu.MenuItems;
+
+                            if (mainMenu.ContainsKey("queue"))
+                            {
+                                mainMenu["queue"].MenuItems.Add(stamp);
+                            }
+                            else
+                            {
+                                MenuItem tasks = new MenuItem("tasks", new MenuItem[] { stamp })
+                                {
+                                    Name = "queue",
+                                    MergeType = MenuMerge.Add
+                                };
+                                mainMenu.Add(mainMenu.Count - 1, tasks);
+                            }
+
+                            timer.Disposed += delegate
+                            {
+                                mainMenu["queue"].MenuItems.Remove(stamp);
+
+                                if (mainMenu["queue"].MenuItems.Count == 0)
+                                    mainMenu["queue"].Dispose();
+                            };
+
+                            timer.Elapsed += delegate
+                            {
+                                Dispatch(path, args);
+                                stamp.PerformClick();
+                            };
+                            
                             timer.AutoReset = false;
                             timer.Start();
                         };
                     }
-                    else 
+                    else
+                    {
                         action = (object sender, EventArgs e) => Dispatch(path, args);
+                    }
 
                     if (tag == "$")
                     {
