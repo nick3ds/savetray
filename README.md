@@ -12,22 +12,18 @@ The software is assumed to run with default permissions. </br>
 3. **optional** add a custom icon `Resources\favicon.ico` (16x16)
 
 ## settings
-**syntax** `<menu>\<item>; <path>; <arguments>`
+**syntax** `<group>\<item>; <delay?>; <path>; <arguments>`
 ```yaml
 # double-click action
-$; explorer; %userprofile%
+$; explorer; https://github.com/nick3ds/savetray
 
-# top-level action
-about; explorer; https://github.com/nick3ds/savetray
-
-# nested action
+# nested menu action
 dev\bash; "C:\Program Files\Git\git-bash.exe"; "--cd-to-home"
-```
-```yaml
-# single commands
-ip-tools\ping (google); "powershell"; -NoExit ping google.nl
+
+# audio timer
+tools\focus; &600; <Resources\{file}.wav>
 
 # multiple commands
-sketch; "cmd"; /c "start mspaint & start notepad"
-browse; "powershell"; @('explorer \"C:\Program Files\"', 'taskmgr') | cmd
+tools\clean; "C:\Program Files\CCleaner\Ccleaner64.exe"; "/AUTO"
+tools\clean; "powershell"; Clear-Recyclebin -force
 ```
